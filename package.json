@@ -1,0 +1,22 @@
+{
+  "name": "configbuilder-3dengine",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "packages/threeDEngine",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm --prefix packages/threeDEngine run build && npm --prefix apps/demo-vue2 run build",
+    "dev:demo": "npm --prefix apps/demo-vue2 run dev"
+  },
+  "devDependencies": {
+    "typescript": "4.9.5",
+    "three": "^0.155.0",
+    "vue": "^2.7.16",
+    "vite": "^4.0.0",
+    "@vitejs/plugin-vue2": "^1.0.0",
+    "@types/node": "^18.0.0",
+    "@types/three": "^0.155.0"
+  }
+}
