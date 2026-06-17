@@ -1,12 +1,14 @@
 import { Entity } from "../entities";
 
 export type WidgetProperties = Record<string, any>;
-export type WidgetType = 'box' | 'sphere' | 'cylinder';
+export type WidgetType = 'box' | 'sphere' | 'cylinder' | 'mesh' | 'group';
 
 export interface WidgetDefinition {
     id: string;
+    name: string;
     type: WidgetType;
     properties: WidgetProperties;
+    children: WidgetDefinition[]
 }
 
 export type EntityPatch = {

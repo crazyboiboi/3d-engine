@@ -14,21 +14,39 @@ export class EntityManager {
         private registry: WidgetRegistry
     ) { }
 
-    addEntity(widget: WidgetDefinition): Entity | null {
+    addEntityFromWidget(widget: WidgetDefinition): Entity | null {
         if (!widget.id) {
             widget.id = `${widget.type}_${Math.floor(Math.random() * 10000)}`;
         }
-
         const mesh = this.registry.create(widget);
-        const entity = new Entity(widget, mesh);
-        if (!entity) return null;
 
-        this.idToEntities.set(widget.id, entity);
+        const entity = new Entity(widget, mesh);
+        this.register(entity);
+
+        return entity;
+    }
+
+    addEntityFromObject(object: THREE.Object3D, widget?: WidgetDefinition): Entity {
+        // TODO: update default for this
+        const finalWidget: WidgetDefinition = widget ?? {
+            id: `mesh_${Math.floor(Math.random() * 10000)}`,
+            name: "Mesh",
+            type: "mesh",
+            children: [],
+            properties: {}
+        };
+
+        const entity = new Entity(finalWidget, object);
+        this.register(entity);
+
+        return entity;
+    }
+
+    private register(entity: Entity) {
+        this.idToEntities.set(entity.widget.id, entity);
         this.objectToEntities.set(entity.object, entity);
 
         this.events.emit("entity:added", { entity });
-
-        return entity;
     }
 
     updateEntity(widget: WidgetDefinition): EntityPatch | null {

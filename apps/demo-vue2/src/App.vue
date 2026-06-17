@@ -213,21 +213,9 @@ export default Vue.extend({
       // URL.revokeObjectURL(url);
     },
     onFile(e: any) {
-      // const file = e.target.files && e.target.files[0];
-      // if (!file) return;
-      // const reader = new FileReader();
-      // reader.onload = () => {
-      //   const txt = reader.result as string;
-      //   const engine = (this.$refs.engine as any).engine;
-      //   if (engine) {
-      //     engine.deserializeScene(txt);
-      //     this.backgroundColor = engine.scene.config.backgroundColor || this.backgroundColor;
-      //     this.showGrid = engine.scene.config.enableGrid ?? this.showGrid;
-      //     this.showAxis = engine.scene.config.enableAxis ?? this.showAxis;
-      //   }
-      //   this.updateSceneObjects();
-      // };
-      // reader.readAsText(file);
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      this.engine.api.data.import(file);
     },
   },
   mounted() {

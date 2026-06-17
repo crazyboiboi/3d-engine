@@ -23,6 +23,10 @@ export default class Communication {
 
     private buildAPI() {
         return {
+            data: {
+                import: (file: File) => this.engine.importManager.import(file)
+            },
+
             events: {
                 on: (event: keyof Events, cb: (payload: any) => void) => {
                     this.engine.events.on(event, cb);
@@ -41,7 +45,7 @@ export default class Communication {
                 },
 
                 create: (config: WidgetDefinition) => {
-                    this.engine.entityManager.addEntity(config);
+                    this.engine.entityManager.addEntityFromWidget(config);
                 },
 
                 update: (config: WidgetDefinition) => {

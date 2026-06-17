@@ -1,7 +1,9 @@
+import { ImportManager } from "../assets";
 import { EntityManager } from "../entities";
-import { InputController, InteractionController, RaycastSystem, SelectionController, TransformGizmoController } from "../interaction";
+import { InputController, InteractionController, RaycastSystem, SelectionController } from "../interaction";
 import { ThreeAdapter } from "../renderer";
 import { CameraManager, SceneManager } from "../scene";
+import { SelectionOutlineController, TransformGizmoController } from "../tools";
 import { WidgetRegistry } from "../widgets";
 import { EventBus } from "./EventBus";
 import { EngineOptions, Events, SceneConfig } from "./types";
@@ -13,6 +15,8 @@ export class Engine {
 
     public events: EventBus<Events>;
 
+    public importManager: ImportManager;
+
     public sceneManager: SceneManager;
     public cameraManager: CameraManager;
     public entityManager: EntityManager;
@@ -20,7 +24,9 @@ export class Engine {
     public inputController: InputController;
     public interactionController: InteractionController;
     public selectionController: SelectionController;
+
     public transformGizmo: TransformGizmoController;
+    public selectionOutline: SelectionOutlineController;
 
     public raycastSystem: RaycastSystem;
 
@@ -37,10 +43,12 @@ export class Engine {
         this.options = options;
 
         this.events = new EventBus();
-
         this.adapter = new ThreeAdapter(container);
 
-        this.entityManager = new EntityManager(this.events, this.registry);
+        this.entityManager = new EntityManager(
+            this.events,
+            this.registry
+        );
 
         this.sceneManager = new SceneManager(
             this.events,
@@ -49,6 +57,11 @@ export class Engine {
             sceneConfig
         );
 
+        this.importManager = new ImportManager(
+            this.events,
+            this.entityManager
+        );
+        
         this.cameraManager = new CameraManager(
             this.events,
             this.adapter.getCanvas()
@@ -64,7 +77,12 @@ export class Engine {
             this.cameraManager.getCamera(),
             this.adapter.getCanvas(),
             this.adapter.getScene()
-        )
+        );
+
+        this.selectionOutline = new SelectionOutlineController(
+            this.events,
+            this.adapter.getScene()
+        );
 
         this.inputController = new InputController(
             this.events,
@@ -137,6 +155,8 @@ export class Engine {
 
     private tick(delta: number) {
         this.cameraManager.update();
+
+        this.selectionOutline.update();
 
         // Future system pipeline hook
         // this.selectionController.tick(delta);

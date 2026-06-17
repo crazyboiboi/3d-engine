@@ -20,7 +20,10 @@ export { MaterialFactory } from './renderer/MaterialFactory';
 // Interaction exports
 export { RaycastSystem } from './interaction/RaycasterSystem';
 export { SelectionController } from './interaction/SelectionController';
-export { TransformGizmoController } from './interaction/TransformGizmoController';
+
+// Tools exports
+export { TransformGizmoController } from './tools/TransformGizmoController';
+export { SelectionOutlineController } from './tools/SelectionOutlineController';
 
 // Scene exports
 export { SceneManager } from './scene/SceneManager';

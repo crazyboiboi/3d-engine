@@ -6,9 +6,14 @@ export class Entity {
     public widget: WidgetDefinition;
     public object: THREE.Object3D;
 
-    constructor(widget: WidgetDefinition, object: THREE.Object3D) {
+    public parent: Entity | null;
+    public children: Entity[];
+
+    constructor(widget: WidgetDefinition, object: THREE.Object3D, parent?: Entity) {
         this.widget = widget;
         this.object = object;
+        this.parent = parent ?? null;
+        this.children = [];
     }
 
     public updateWidget(newWgt: WidgetDefinition): EntityPatch | null {
@@ -124,5 +129,19 @@ export class Entity {
     private requiresRebuild(prev: WidgetDefinition, next: WidgetDefinition) {
         const keys = ["width", "height", "depth", "radius", "radiusTop", "radiusBottom"];
         return keys.some((k) => prev.properties[k] !== next.properties[k]);
+    }
+
+    public addChild(child: Entity) {
+        this.children.push(child);
+        child.parent = this;
+
+        this.object.add(child.object);
+    }
+
+    public removeChild(child: Entity) {
+        this.children = this.children.filter(c => c !== child);
+        child.parent = null;
+
+        this.object.remove(child.object);
     }
 }
