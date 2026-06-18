@@ -1,6 +1,7 @@
 import { EventBus, Events } from "../core";
 import { RaycastSystem } from "./RaycasterSystem";
 import { Entity, EntityManager } from "../entities";
+import { SelectionController } from "./SelectionController";
 
 type InteractionMode = "idle" | "pan" | "orbit" | "gizmo";
 
@@ -23,7 +24,8 @@ export class InteractionController {
     constructor(
         private events: EventBus<Events>,
         private raycast: RaycastSystem,
-        private entityManager: EntityManager
+        private entityManager: EntityManager,
+        private selectionController: SelectionController
     ) {
         this.registerEvents();
     }
@@ -67,13 +69,17 @@ export class InteractionController {
         const { x, y } = event;
 
         if (!this.isPointerDown) {
-            const hit = this.raycast.pick(x, y, this.entityManager.getAllEntities());
+            const allEntities = this.entityManager.getAllEntities();
+            const candidates = this.selectionController.filterSelectable(allEntities);
+            const hit = this.raycast.pick(x, y, candidates);
 
-            const entity = hit.length
+            const rawEntity = hit.length
                 ? this.entityManager.getEntity(hit[0].object)
                 : null;
 
-                if (entity !== this.hoveredEntity) {
+            const entity = this.selectionController.resolveSelected(rawEntity)
+
+            if (entity !== this.hoveredEntity) {
                 this.hoveredEntity = entity;
 
                 this.events.emit("entity:hover", { entity });
@@ -113,11 +119,15 @@ export class InteractionController {
 
                 const now = performance.now();
 
-                const hit = this.raycast.pick(x, y, this.entityManager.getAllEntities());
+                const allEntities = this.entityManager.getAllEntities();
+                const candidates = this.selectionController.filterSelectable(allEntities);
+                const hit = this.raycast.pick(x, y, candidates);
 
-                const entity = hit.length ?
-                    this.entityManager.getEntity(hit[0].object) :
-                    null;
+                const rawEntity = hit.length
+                    ? this.entityManager.getEntity(hit[0].object)
+                    : null;
+
+                const entity = this.selectionController.resolveSelected(rawEntity);
 
                 const isDoubleClick =
                     entity &&

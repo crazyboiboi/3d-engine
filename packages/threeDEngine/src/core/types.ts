@@ -56,13 +56,13 @@ export type Events = {
     'entity:removed': { removed: { id: string, entity: Entity }[] };
     'entity:updated': { updatedEntity: Entity, patch: EntityPatch };
 
-    'entity:selected': { entity: Entity | null };
     'entity:hover': { entity: Entity | null };
+    'entity:click': { entity: Entity | null };
     'entity:dblclick': { entity: Entity | null };
 
     'selection:changed': { entity: Entity | null };
 
-    'selection:add': string[];
+    'selection:add': { entity: Entity | null };
     'selection:removed': string[];
 
     'gizmo:dragging': boolean;

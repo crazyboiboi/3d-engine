@@ -87,15 +87,16 @@ export class Engine {
         this.inputController = new InputController(
             this.events,
             this.adapter.getCanvas()
-        )
+        );
+        
+        this.selectionController = new SelectionController(this.events);
 
         this.interactionController = new InteractionController(
             this.events,
             this.raycastSystem,
-            this.entityManager
+            this.entityManager,
+            this.selectionController
         );
-
-        this.selectionController = new SelectionController(this.events);
 
         this.initEventListeners();
     }
