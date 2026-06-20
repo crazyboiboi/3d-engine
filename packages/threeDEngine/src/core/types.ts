@@ -1,5 +1,13 @@
 import { Entity } from "../entities";
 
+export interface InteractionHandler {
+    isHit(x: number, y: number): boolean;
+
+    onPointerDown?(e: { x: number, y: number, button: number, shiftKey: boolean, altKey: boolean, ctrlKey: boolean }): void;
+    onPointerMove?(e: { x: number; y: number }): void;
+    onPointerUp?(e: { x: number, y: number, button: number, shiftKey: boolean, altKey: boolean, ctrlKey: boolean }): void;
+}
+
 export type WidgetProperties = Record<string, any>;
 export type WidgetType = 'box' | 'sphere' | 'cylinder' | 'mesh' | 'group';
 
@@ -48,9 +56,10 @@ export type Events = {
     'key:down': { key: string, shiftKey: boolean, altKey: boolean, ctrlKey: boolean };
     'wheel': { deltaY: number };
 
-    'pointer:up': { x: number, y: number, button: number };
-    'pointer:down': { x: number, y: number, button: number };
+    'pointer:up': { x: number, y: number, button: number, shiftKey: boolean, altKey: boolean, ctrlKey: boolean };
+    'pointer:down': { x: number, y: number, button: number, shiftKey: boolean, altKey: boolean, ctrlKey: boolean };
     'pointer:move': { x: number, y: number };
+    'interaction:fallback-click': { x: number, y: number, button: number, shiftKey?: boolean, altKey?: boolean, ctrlKey?: boolean };
 
     'entity:added': { entity: Entity };
     'entity:removed': { removed: { id: string, entity: Entity }[] };
@@ -60,7 +69,7 @@ export type Events = {
     'entity:click': { entity: Entity | null };
     'entity:dblclick': { entity: Entity | null };
 
-    'selection:changed': { entity: Entity | null };
+    'selection:changed': { entities: Entity[] };
 
     'selection:add': { entity: Entity | null };
     'selection:removed': string[];

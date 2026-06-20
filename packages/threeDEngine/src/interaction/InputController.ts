@@ -22,7 +22,10 @@ export class InputController {
         this.events.emit("pointer:down", {
             x: e.clientX,
             y: e.clientY,
-            button: e.button
+            button: e.button,
+            ctrlKey: e.ctrlKey,
+            shiftKey: e.shiftKey,
+            altKey: e.altKey
         });
     };
 
@@ -37,7 +40,10 @@ export class InputController {
         this.events.emit("pointer:up", {
             x: e.clientX,
             y: e.clientY,
-            button: e.button
+            button: e.button,
+            ctrlKey: e.ctrlKey,
+            shiftKey: e.shiftKey,
+            altKey: e.altKey
         });
     };
 

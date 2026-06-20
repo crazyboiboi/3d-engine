@@ -71,6 +71,7 @@ export class EntityManager {
         this.events.emit("entity:removed", { removed: [{ id, entity }] });
 
         this.idToEntities.delete(id);
+        this.objectToEntities.delete(entity.object);
 
         return entity;
     }
@@ -98,10 +99,10 @@ export class EntityManager {
 
     clear() {
         const removed = Array.from(this.idToEntities.entries()).map(([id, entity]) => ({ id, entity }));
+        
+        this.events.emit("entity:removed", { removed });
 
         this.idToEntities.clear();
         this.objectToEntities.clear();
-
-        this.events.emit("entity:removed", { removed });
     }
 }

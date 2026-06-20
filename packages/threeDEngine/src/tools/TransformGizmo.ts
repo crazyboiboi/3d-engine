@@ -4,12 +4,9 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 import { Entity } from '../entities';
 import { EventBus, Events } from '../core';
 
-// type EngineEvents = {
-//     "transform-start": Entity;
-//     "transform-end": Entity;
-// };
+// TODO: update gizmo to support multi-selected
 
-export class TransformGizmoController {
+export class TransformGizmo {
     private mode: 'translate' | 'rotate' | 'scale' = 'translate';
 
     private gizmo: TransformControls | null = null;
@@ -35,7 +32,7 @@ export class TransformGizmoController {
         this.registerEvents();
     }
 
-    private initEventListeners () {
+    private initEventListeners() {
         if (!this.gizmo) return;
 
         // Add event listeners
@@ -58,8 +55,24 @@ export class TransformGizmoController {
     }
 
     private registerEvents() {
-        this.events.on("selection:changed", (payload: { entity: Entity | null }) => {
-            this.attach(payload.entity);
+        this.events.on("selection:changed", (payload: { entities: Entity[] }) => {
+            this.attach(payload.entities[0]);
+        });
+
+        this.events.on("key:down", (payload: { key: string }) => {
+            if (!this.gizmo) return;
+
+            switch (payload.key) {
+                case "g":
+                    this.setMode("translate");
+                    break;
+                case "r":
+                    this.setMode("rotate");
+                    break;
+                case "s":
+                    this.setMode("scale");
+                    break;
+            }
         });
     }
 
@@ -77,7 +90,7 @@ export class TransformGizmoController {
 
     detach(): void {
         if (!this.gizmo) return;
-
+        
         this.activeEntity = null;
         this.gizmo.detach();
     }

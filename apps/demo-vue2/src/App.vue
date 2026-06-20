@@ -51,13 +51,13 @@
           @click="selectObject(obj.id)"
           :style="{
             padding: '6px 8px',
-            background: selected && selected.id === obj.id ? '#4a9eff' : '#fff',
-            color: selected && selected.id === obj.id ? '#fff' : '#333',
-            border: '1px solid ' + (selected && selected.id === obj.id ? '#4a9eff' : '#ddd'),
+            background: selectedWidgetIds.includes(obj.id) ? '#4a9eff' : '#fff',
+            color: selectedWidgetIds.includes(obj.id) ? '#fff' : '#333',
+            border: '1px solid ' + (selectedWidgetIds.includes(obj.id) ? '#4a9eff' : '#ddd'),
             borderRadius: '4px',
             cursor: 'pointer',
             fontSize: '11px',
-            fontWeight: selected && selected.id === obj.id ? '600' : '400',
+            fontWeight: selectedWidgetIds.includes(obj.id) ? '600' : '400',
             textAlign: 'left'
           }"
         >
@@ -74,7 +74,6 @@
         style="flex:1;position:relative"
         :scene-json="sceneConfig"
         @object-selected="onSelected" 
-        @object-hover="onHover"
         @ready="onReady"
       />
     </div>
@@ -82,7 +81,7 @@
     <!-- Right Sidebar: Property Panel -->
     <div style="width:260px;border-left:1px solid #ddd;background:#f9f9f9;overflow-y:auto">
       <property-panel 
-        :widget="selected"
+        :widget="selected[0]"
         @update-property="onUpdateProperty"
         @delete-widget="deleteSelected"
       />
@@ -102,7 +101,7 @@ export default Vue.extend({
     return {
       engine: null as any,
 
-      selected: null as any,
+      selected: [] as any[],
       sceneObjects: [] as any[],
 
       sceneConfig: {
@@ -111,6 +110,11 @@ export default Vue.extend({
         enableAxis: false,
       }
     };
+  },
+  computed: {
+    selectedWidgetIds() {
+      return this.selected.map(x => x.id);
+    }
   },
   watch: {
     selected() {
@@ -175,26 +179,23 @@ export default Vue.extend({
     onSelected(payload: any) {
       this.selected = payload;
     },
-    onHover(payload: any) {
-      // noop
-    },
     onUpdateProperty(data: any) {
       // const engine = (this.$refs.engine as any).engine;
       // if (!engine || !this.selected) return;
       // engine.updateWidgetProperty(this.selected.id, data.property, data.value);
       // this.selected = engine.scene.getWidget(this.selected.id);
+      const wgt = JSON.parse(JSON.stringify(this.selected[0]));
+
+      if (wgt.properties[data.property] !== null || wgt.properties[data.property] !== undefined) {
+        wgt.properties[data.property] = data.value;
+      }
+      this.engine.api.object.update(wgt);
     },
     deleteSelected() {
-      // const engine = (this.$refs.engine as any).engine;
-      // if (!engine || !this.selected) return;
-      // engine.removeWidget(this.selected.id);
-      // this.selected = null;
-      // this.updateSceneObjects();
+      this.engine.api.object.delete(this.selected[0].id);
     },
     selectObject(id: string) {
-      // const engine = (this.$refs.engine as any).engine;
-      // if (!engine) return;
-      // engine.selectWidget(id);
+      this.engine.api.selection.add([id]);
     },
     updateSceneObjects() {
       // if (!this.engine) return;
@@ -224,16 +225,16 @@ export default Vue.extend({
     });
 
     this.engine.api.events.on("selection:changed", (payload: any) => {
-      if (payload.entity) {
-        this.selected = payload.entity.widget;
+      if (payload.entities) {
+        this.selected = payload.entities.map((x: any) => x.widget);
       } else {
-        this.selected = null;
+        this.selected = [];
       }
     });
 
     this.engine.api.events.on("entity:updated", (payload: any) => {
-      if (this.selected.id === payload.patch.id) {
-        this.selected = payload.updatedEntity.widget;
+      if (this.selected[0].id === payload.patch.id) {
+        this.selected = [payload.updatedEntity.widget];
       }
     });
   }

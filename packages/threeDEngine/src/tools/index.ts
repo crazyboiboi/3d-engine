@@ -1,2 +1,2 @@
-export { TransformGizmoController } from "./TransformGizmoController";
-export { SelectionOutlineController } from "./SelectionOutlineController";
+export { TransformGizmo } from "./TransformGizmo";
+export { SelectionOutline } from "./SelectionOutline";

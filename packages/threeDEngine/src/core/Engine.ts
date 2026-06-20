@@ -3,7 +3,7 @@ import { EntityManager } from "../entities";
 import { InputController, InteractionController, RaycastSystem, SelectionController } from "../interaction";
 import { ThreeAdapter } from "../renderer";
 import { CameraManager, SceneManager } from "../scene";
-import { SelectionOutlineController, TransformGizmoController } from "../tools";
+import { SelectionOutline, TransformGizmo } from "../tools";
 import { WidgetRegistry } from "../widgets";
 import { EventBus } from "./EventBus";
 import { EngineOptions, Events, SceneConfig } from "./types";
@@ -25,8 +25,8 @@ export class Engine {
     public interactionController: InteractionController;
     public selectionController: SelectionController;
 
-    public transformGizmo: TransformGizmoController;
-    public selectionOutline: SelectionOutlineController;
+    public transformGizmo: TransformGizmo;
+    public selectionOutline: SelectionOutline;
 
     public raycastSystem: RaycastSystem;
 
@@ -61,7 +61,7 @@ export class Engine {
             this.events,
             this.entityManager
         );
-        
+
         this.cameraManager = new CameraManager(
             this.events,
             this.adapter.getCanvas()
@@ -72,14 +72,14 @@ export class Engine {
             this.adapter.getCanvas()
         );
 
-        this.transformGizmo = new TransformGizmoController(
+        this.transformGizmo = new TransformGizmo(
             this.events,
             this.cameraManager.getCamera(),
             this.adapter.getCanvas(),
             this.adapter.getScene()
         );
 
-        this.selectionOutline = new SelectionOutlineController(
+        this.selectionOutline = new SelectionOutline(
             this.events,
             this.adapter.getScene()
         );
@@ -88,14 +88,16 @@ export class Engine {
             this.events,
             this.adapter.getCanvas()
         );
-        
-        this.selectionController = new SelectionController(this.events);
+
+        this.selectionController = new SelectionController(
+            this.events,
+            this.entityManager,
+            this.raycastSystem
+        );
 
         this.interactionController = new InteractionController(
             this.events,
-            this.raycastSystem,
-            this.entityManager,
-            this.selectionController
+            [this.selectionController] // can add AxisHelper and other interaction tools here
         );
 
         this.initEventListeners();

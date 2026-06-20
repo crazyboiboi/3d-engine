@@ -24,12 +24,12 @@ export class SceneManager {
         this.events.on("entity:updated", this.onEntityPatched);
     }
 
-    private onEntityCreated = (event: { entity: Entity }) => {
-        this.adapter.sceneAdd(event.entity.object);
+    private onEntityCreated = (payload: { entity: Entity }) => {
+        this.adapter.sceneAdd(payload.entity.object);
     }
 
-    private onEntityPatched = (event: { patch: EntityPatch }) => {
-        const { patch } = event;
+    private onEntityPatched = (payload: { patch: EntityPatch }) => {
+        const { patch } = payload;
 
         const entity = this.entities.getEntityById(patch.id);
         if (!entity) return;

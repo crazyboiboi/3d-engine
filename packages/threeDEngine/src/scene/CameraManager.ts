@@ -72,7 +72,7 @@ export class CameraManager {
 
     private onGizmoDragging = (flag: boolean) => {
         this.controls.enabled = !flag;
-    }   
+    }
 
     private syncState() {
         this.state.position.copy(this.camera.position);

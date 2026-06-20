@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 import { EntityPatch } from '../core';
 import { Entity } from '../entities';
+import { WidgetRegistry } from '../widgets';
 
 export class ThreeAdapter {
 	private container: HTMLElement;
@@ -12,7 +13,10 @@ export class ThreeAdapter {
 	private gridHelper: THREE.GridHelper | null = null;
 	private axesHelper: THREE.AxesHelper | null = null;
 
-	constructor(container: HTMLElement) {
+	constructor(
+		container: HTMLElement,
+		private registry: WidgetRegistry
+	) {
 		this.container = container;
 
 		const width = this.container.clientWidth || 800;
@@ -140,10 +144,11 @@ export class ThreeAdapter {
 
 		// geometry rebuild (TODO)
 		if (patch.geometry) {
-			// const newObj = MeshFactory.createMesh({
+			console.log("TRIGGERED GEOMETRY REBUILD: ", patch.geometry);
+			// const newObj = this.registry.create({
 			// 	...entity.widget,
 			// 	...patch.geometry,
-			// })
+			// });
 
 			// if (!newObj || !obj.parent) return;
 

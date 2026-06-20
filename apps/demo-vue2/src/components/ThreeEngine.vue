@@ -10,44 +10,17 @@ import {
 
 export default Vue.extend({
   name: 'ThreeEngine',
-
   props: {
     sceneJson: {
       type: [Object, String],
       default: null
     }
   },
-
-  data() {
-    return {};
-  },
-
   mounted() {
     const container = this.$refs.container as HTMLElement;
     const comm = EngineFactory.create(container, this.sceneJson);
     this.$emit("ready", comm);
-  },
-
-  // beforeDestroy() {
-  //   // cleanup events
-  //   if (this.offSelected) this.offSelected();
-  //   if (this.offHover) this.offHover();
-
-  //   // gizmo cleanup
-  //   if (this.gizmo?.dispose) {
-  //     this.gizmo.dispose();
-  //   }
-
-  //   // adapter cleanup
-  //   if (this.adapter?.dispose) {
-  //     this.adapter.dispose();
-  //   }
-
-  //   // engine cleanup
-  //   if (this.engine?.destroy) {
-  //     this.engine.destroy();
-  //   }
-  // }
+  }
 });
 </script>
 

@@ -22,8 +22,8 @@ export { RaycastSystem } from './interaction/RaycasterSystem';
 export { SelectionController } from './interaction/SelectionController';
 
 // Tools exports
-export { TransformGizmoController } from './tools/TransformGizmoController';
-export { SelectionOutlineController } from './tools/SelectionOutlineController';
+export { TransformGizmo } from './tools/TransformGizmo';
+export { SelectionOutline } from './tools/SelectionOutline';
 
 // Scene exports
 export { SceneManager } from './scene/SceneManager';
